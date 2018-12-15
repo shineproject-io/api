@@ -73,9 +73,9 @@ namespace ListsAPI.Infrastructure.Storage
             var cloudBlobContainer = FetchBlobContainer(storageAccount, containerName);
             CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(fileName);
 
-            if (cloudBlobContainer != null)
+            if (await cloudBlobContainer.ExistsAsync())
             {
-                await cloudBlockBlob.DeleteIfExistsAsync();
+                await cloudBlockBlob.DeleteAsync();
             }
         }
     }

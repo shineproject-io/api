@@ -26,7 +26,7 @@ namespace ListsAPI.Features.Lists.Authorizers
             var authorisationResponse = new AuthorisationResponse<List>
             {
                 ResponseObject = list,
-                AuthorisationResult = (list != null || list.UserId == userProfileId)
+                AuthorisationResult = (list != null && list.UserId == userProfileId)
             };
 
             return authorisationResponse;

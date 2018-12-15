@@ -33,7 +33,7 @@ namespace ListsAPI.Infrastructure
 
             if (response.StatusCode != HttpStatusCode.Accepted)
             {
-                throw new System.Exception("Unable to test message");
+                throw new WebException("Unable to send email message");
             }
         }
     }
