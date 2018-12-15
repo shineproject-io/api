@@ -38,7 +38,7 @@ namespace ListsAPI.Infrastructure.Storage
             }
         }
 
-        private CloudBlobContainer FetchBlobContainer(CloudStorageAccount storageAccount, string containerName, string fileName)
+        private CloudBlobContainer FetchBlobContainer(CloudStorageAccount storageAccount, string containerName)
         {
             CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
             return cloudBlobClient.GetContainerReference(containerName);
@@ -47,7 +47,7 @@ namespace ListsAPI.Infrastructure.Storage
         public async Task<string> StoreFile(string containerName, string fileName, IFormFile uploadFile)
         {
             var storageAccount = ConnectStorageAccount();
-            var cloudBlobContainer = FetchBlobContainer(storageAccount, containerName, fileName);
+            var cloudBlobContainer = FetchBlobContainer(storageAccount, containerName);
             await cloudBlobContainer.CreateIfNotExistsAsync();
 
             BlobContainerPermissions permissions = new BlobContainerPermissions
@@ -70,7 +70,7 @@ namespace ListsAPI.Infrastructure.Storage
         public async Task DeleteFile(string containerName, string fileName)
         {
             var storageAccount = ConnectStorageAccount();
-            var cloudBlobContainer = FetchBlobContainer(storageAccount, containerName, fileName);
+            var cloudBlobContainer = FetchBlobContainer(storageAccount, containerName);
             CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(fileName);
 
             if (cloudBlobContainer != null)

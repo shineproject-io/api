@@ -3,7 +3,6 @@ using ListsAPI.Features.Lists.DataAccess;
 using ListsAPI.Features.Lists.Enums;
 using ListsAPI.Features.Lists.RequestModels;
 using ListsAPI.Features.Lists.ResponseModels;
-using ListsAPI.Features.Lists.Tables;
 using ListsAPI.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -111,18 +110,6 @@ namespace ListsAPI.Features.Lists
             {
                 return BadRequest("An image source must be specified");
             }
-
-            var list = new List()
-            {
-                UserId = _userProfileId,
-                Name = request.Name,
-                Description = request.Description,
-                BackgroundImageFilePath = request.ImageSource,
-                BackgroundImageFileName = string.Empty,
-                State = ListState.Open,
-                DateCreated = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow,
-            };
 
             var listId = await _listWriter.Add(_userProfileId, request.Name, request.Description, ListState.Open, request.ImageSource);
 
