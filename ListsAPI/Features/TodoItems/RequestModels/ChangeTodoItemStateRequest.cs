@@ -2,7 +2,7 @@
 
 namespace ListsAPI.Features.TodoItems.RequestModels
 {
-    public class ChangeStateRequest
+    public class ChangeTodoItemStateRequest
     {
         public TodoItemState state { get; set; }
     }

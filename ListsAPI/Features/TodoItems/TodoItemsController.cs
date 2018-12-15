@@ -20,22 +20,14 @@ namespace ListsAPI.Features.Lists
     {
         private readonly ITodoItemsWriter _todoItemsWriter;
         private readonly ITodoItemsReader _todoItemsReader;
-        private readonly IListReader _listReader;
         private readonly IListAuthoriser _listAuthoriser;
 
-        private int _userProfileId
-        {
-            get
-            {
-                return Convert.ToInt32(User.FindFirst(ClaimTypes.Name)?.Value);
-            }
-        }
+        private int _userProfileId => Convert.ToInt32(User.FindFirst(ClaimTypes.Name)?.Value);
 
         public TodoItemsController(ITodoItemsWriter todoItemsWriter, ITodoItemsReader todoItemsReader, IListReader listReader, IListAuthoriser listAuthoriser)
         {
             _todoItemsWriter = todoItemsWriter;
             _todoItemsReader = todoItemsReader;
-            _listReader = listReader;
             _listAuthoriser = listAuthoriser;
         }
 
@@ -94,11 +86,11 @@ namespace ListsAPI.Features.Lists
         /// </summary>
         /// <param name="listId"></param>
         /// <param name="todoItemId"></param>
-        /// <param name="state"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
         [Route("api/lists/{listId}/todoItems/{todoItemId}/state")]
-        public async Task<IActionResult> ChangeState(int listId, int todoItemId, ChangeStateRequest request)
+        public async Task<IActionResult> ChangeState(int listId, int todoItemId, ChangeTodoItemStateRequest request)
         {
             var authorisationResponse = await _listAuthoriser.IsOwner(listId, _userProfileId);
 

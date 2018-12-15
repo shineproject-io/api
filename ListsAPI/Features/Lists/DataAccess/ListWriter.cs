@@ -29,7 +29,7 @@ namespace ListsAPI.Features.Lists.DataAccess
 
     public class ListWriter : IListWriter
     {
-        private ListContext _context;
+        private readonly ListContext _context;
         private readonly IDatabaseConnectionProvider _databaseConnectionProvider;
 
         public ListWriter(ListContext context, IDatabaseConnectionProvider databaseConnectionProvider)

@@ -38,7 +38,7 @@ namespace ListsAPI.Infrastructure.Storage
             }
         }
 
-        private CloudBlobContainer FetchBlobContainer(CloudStorageAccount storageAccount, string containerName)
+        private static CloudBlobContainer FetchBlobContainer(CloudStorageAccount storageAccount, string containerName)
         {
             CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
             return cloudBlobClient.GetContainerReference(containerName);
