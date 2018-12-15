@@ -1,4 +1,7 @@
 # ShineProject-API
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d0d321061db24a1caf2c8d2a59e94b4a)](https://app.codacy.com/app/spam_2/ShineProject-API?utm_source=github.com&utm_medium=referral&utm_content=tommcclean/ShineProject-API&utm_campaign=Badge_Grade_Dashboard)
+
 ShineProject is an application which allows end users to create to-do lists to stay organised. This is a personal project which i have decided to put on GitHub.
 - This repository contains the C# .NETCore Web API which is hosted at https://api.shineproject.io/swagger
 - This isn't a project intended to make any money, its just to provide a free service and be a good place to try out new technology.
