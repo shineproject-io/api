@@ -1,11 +1,9 @@
 ﻿using Dapper;
 using ListsAPI.Features.Lists.Enums;
-using ListsAPI.Features.Lists.Tables;
 using ListsAPI.Infrastructure;
 using ListsAPI.Infrastructure.Database;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ListsAPI.Features.Lists.DataAccess
@@ -24,17 +22,15 @@ namespace ListsAPI.Features.Lists.DataAccess
 
         Task ChangeDescription(int listId, string description);
 
-        void ChangeOrder(IEnumerable<List> lists, List<int> orderedListIds);
+        Task ChangeOrder(List<int> orderedListIds, int userProfileId);
     }
 
     public class ListWriter : IListWriter
     {
-        private readonly ListContext _context;
         private readonly IDatabaseConnectionProvider _databaseConnectionProvider;
 
         public ListWriter(ListContext context, IDatabaseConnectionProvider databaseConnectionProvider)
         {
-            _context = context;
             _databaseConnectionProvider = databaseConnectionProvider;
         }
 
@@ -179,19 +175,35 @@ namespace ListsAPI.Features.Lists.DataAccess
             }
         }
 
-        public void ChangeOrder(IEnumerable<List> lists, List<int> orderedListIds)
+        public async Task ChangeOrder(List<int> orderedListIds, int userProfileId)
         {
-            lists.Select(lst => { lst.Position = null; return lst; }).ToList();
-
-            for (int loop = 0; loop < orderedListIds.Count; loop += 1)
+            using (var con = _databaseConnectionProvider.New())
             {
-                var list = lists.FirstOrDefault(lst => lst.Id == orderedListIds[loop]);
-                list.DateUpdated = DateTime.UtcNow;
+                var updateDate = DateTime.UtcNow;
 
-                list.Position = loop + 1;
+                for (int loop = 0; loop < orderedListIds.Count; loop += 1)
+                {
+                    var listId = orderedListIds[loop];
+
+                    await con.ExecuteAsync(@"
+                    UPDATE
+                        Lists
+                    SET
+                        Position = @position,
+                        DateUpdated = @updateDate
+                    WHERE
+                        Id = @listId
+                            AND UserId = @userProfileId
+                            AND State = @state", new
+                    {
+                        position = loop + 1,
+                        updateDate,
+                        listId,
+                        userProfileId,
+                        state = ListState.Open
+                    });
+                }
             }
-
-            _context.SaveChanges();
         }
     }
 }

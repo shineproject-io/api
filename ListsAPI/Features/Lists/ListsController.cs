@@ -195,9 +195,7 @@ namespace ListsAPI.Features.Lists
         [Route("api/lists/order")]
         public async Task<IActionResult> ChangeOrder(ChangeListOrderRequest request)
         {
-            var lists = await _listReader.GetByState(_userProfileId, ListState.Open);
-
-            _listWriter.ChangeOrder(lists, request.ListIds);
+            await _listWriter.ChangeOrder(request.ListIds, _userProfileId);
 
             return Ok();
         }
