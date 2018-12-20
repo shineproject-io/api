@@ -2,6 +2,7 @@
 using ListsAPI.Features.Profile.DataAccess;
 using ListsAPI.Features.Profile.RequestModels;
 using ListsAPI.Features.Profile.ResponseModels;
+using ListsAPI.Infrastructure.ContentDelivery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,11 +16,13 @@ namespace ListsAPI.Features.Search
     {
         private readonly IUserProfileWriter _userProfileWriter;
         private readonly IUserProfileReader _userProfileReader;
+        private readonly IContentDeliveryNetworkResolver _cdnResolver;
 
-        public UserProfilesController(IUserProfileWriter userProfileWriter, IUserProfileReader userProfileReader)
+        public UserProfilesController(IUserProfileWriter userProfileWriter, IUserProfileReader userProfileReader, IContentDeliveryNetworkResolver cdnResolver)
         {
             _userProfileWriter = userProfileWriter;
             _userProfileReader = userProfileReader;
+            _cdnResolver = cdnResolver;
         }
 
         /// <summary>
@@ -47,7 +50,7 @@ namespace ListsAPI.Features.Search
                 EmailAddress = userProfile.EmailAddress,
                 GivenName = userProfile.GivenName,
                 FamilyName = userProfile.FamilyName,
-                ProfilePicturePath = userProfile.ProfilePicturePath
+                ProfilePicturePath = _cdnResolver.Resolve(userProfile.ProfilePicturePath)
             };
 
             return Ok(response);

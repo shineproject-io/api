@@ -3,6 +3,7 @@ using ListsAPI.Features.Lists.DataAccess;
 using ListsAPI.Features.Lists.Enums;
 using ListsAPI.Features.Lists.RequestModels;
 using ListsAPI.Features.Lists.ResponseModels;
+using ListsAPI.Infrastructure.ContentDelivery;
 using ListsAPI.Infrastructure.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,18 +21,20 @@ namespace ListsAPI.Features.Lists
         private readonly IListAuthoriser _listAuthoriser;
         private readonly IListWriter _listWriter;
         private readonly IListReader _listReader;
-        private readonly IAzureStorageManager _storeFile;
+        private readonly IAzureStorageManager _storageManager;
+        private readonly IContentDeliveryNetworkResolver _cdnResolver;
 
         private int _userProfileId => Convert.ToInt32(User.FindFirst(ClaimTypes.Name)?.Value);
 
         private const string CONTAINER_NAME = "listbackgrounds";
 
-        public ListsController(IListAuthoriser listAuthoriser, IListWriter listWriter, IListReader listReader, IAzureStorageManager storeFile)
+        public ListsController(IListAuthoriser listAuthoriser, IListWriter listWriter, IListReader listReader, IAzureStorageManager storageManager, IContentDeliveryNetworkResolver cdnResolver)
         {
             _listAuthoriser = listAuthoriser;
             _listWriter = listWriter;
             _listReader = listReader;
-            _storeFile = storeFile;
+            _storageManager = storageManager;
+            _cdnResolver = cdnResolver;
         }
 
         /// <summary>
@@ -52,7 +55,7 @@ namespace ListsAPI.Features.Lists
                        Id = lst.Id,
                        Name = lst.Name,
                        Description = lst.Description,
-                       ImageSource = lst.BackgroundImageFilePath,
+                       ImageSource = _cdnResolver.Resolve(lst.BackgroundImageFilePath),
                        State = lst.State,
                        Position = lst.Position
                    });
@@ -82,7 +85,7 @@ namespace ListsAPI.Features.Lists
                 Id = authorisationResponse.ResponseObject.Id,
                 Name = authorisationResponse.ResponseObject.Name,
                 Description = authorisationResponse.ResponseObject.Description,
-                ImageSource = authorisationResponse.ResponseObject.BackgroundImageFilePath,
+                ImageSource = _cdnResolver.Resolve(authorisationResponse.ResponseObject.BackgroundImageFilePath),
                 State = authorisationResponse.ResponseObject.State,
                 Position = authorisationResponse.ResponseObject.Position
             };
@@ -131,7 +134,7 @@ namespace ListsAPI.Features.Lists
 
             if (!string.IsNullOrEmpty(existingBackgroundPictureFileName))
             {
-                await _storeFile.DeleteFile(CONTAINER_NAME, existingBackgroundPictureFileName);
+                await _storageManager.DeleteFile(CONTAINER_NAME, existingBackgroundPictureFileName);
             }
 
             await _listWriter.ChangeState(authorisationResponse.ResponseObject.Id, ListState.Deleted);
@@ -252,7 +255,7 @@ namespace ListsAPI.Features.Lists
 
             if (!string.IsNullOrEmpty(existingBackgroundPictureFileName))
             {
-                await _storeFile.DeleteFile(CONTAINER_NAME, existingBackgroundPictureFileName);
+                await _storageManager.DeleteFile(CONTAINER_NAME, existingBackgroundPictureFileName);
             }
 
             return Ok();
@@ -299,13 +302,13 @@ namespace ListsAPI.Features.Lists
 
             var existingBackgroundPictureFileName = authorisationResponse.ResponseObject.BackgroundImageFileName;
 
-            var absoluteFilePath = await _storeFile.StoreFile(CONTAINER_NAME, fileName, listBackgroundPhoto);
+            var absoluteFilePath = await _storageManager.StoreFile(CONTAINER_NAME, fileName, listBackgroundPhoto);
 
             await _listWriter.ChangePicture(listId, absoluteFilePath, fileName);
 
             if (!string.IsNullOrEmpty(existingBackgroundPictureFileName))
             {
-                await _storeFile.DeleteFile(CONTAINER_NAME, existingBackgroundPictureFileName);
+                await _storageManager.DeleteFile(CONTAINER_NAME, existingBackgroundPictureFileName);
             }
 
             return NoContent();

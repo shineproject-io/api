@@ -5,6 +5,7 @@ using ListsAPI.Features.Profile.DataAccess;
 using ListsAPI.Features.TodoItems.DataAccess;
 using ListsAPI.Infrastructure;
 using ListsAPI.Infrastructure.Authentication;
+using ListsAPI.Infrastructure.ContentDelivery;
 using ListsAPI.Infrastructure.Database;
 using ListsAPI.Infrastructure.Storage;
 using Microsoft.AspNetCore.Builder;
@@ -47,6 +48,7 @@ namespace ListsAPI
             services.AddScoped<IDatabaseConnectionProvider, DatabaseConnectionProvider>();
             services.AddScoped<IListAuthoriser, ListAuthoriser>();
             services.AddScoped<IAuthenticationTokenProvider, AuthenticationTokenProvider>();
+            services.AddScoped<IContentDeliveryNetworkResolver, ContentDeliveryNetworkResolver>();
 
             services.AddCors();
 
