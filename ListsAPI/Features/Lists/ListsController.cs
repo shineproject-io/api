@@ -22,7 +22,7 @@ namespace ListsAPI.Features.Lists
         private readonly IListReader _listReader;
         private readonly IAzureStorageManager _storeFile;
 
-        public int _userProfileId => Convert.ToInt32(User.FindFirst(ClaimTypes.Name)?.Value);
+        private int _userProfileId => Convert.ToInt32(User.FindFirst(ClaimTypes.Name)?.Value);
 
         private const string CONTAINER_NAME = "listbackgrounds";
 

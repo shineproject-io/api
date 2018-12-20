@@ -67,6 +67,7 @@ namespace ListsAPI.Features.Lists
         /// <returns></returns>
         [HttpPost]
         [Route("api/lists/{listId}/todoItems")]
+        [ProducesResponseType(typeof(int), 200)]
         public async Task<IActionResult> Post(int listId, CreateTodoItemRequest request)
         {
             var authorisationResponse = await _listAuthoriser.IsOwner(listId, _userProfileId);
@@ -76,9 +77,9 @@ namespace ListsAPI.Features.Lists
                 return NotFound();
             }
 
-            await _todoItemsWriter.Add(request.Title, TodoItemState.Open, listId, _userProfileId);
+            var todoId = await _todoItemsWriter.Add(request.Title, TodoItemState.Open, listId, _userProfileId);
 
-            return Ok();
+            return Ok(todoId);
         }
 
         /// <summary>
