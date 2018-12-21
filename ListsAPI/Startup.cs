@@ -2,6 +2,8 @@
 using ListsAPI.Features.Lists.Authorizers;
 using ListsAPI.Features.Lists.DataAccess;
 using ListsAPI.Features.Profile.DataAccess;
+using ListsAPI.Features.Suggestions.Generators;
+using ListsAPI.Features.Suggestions.Providers;
 using ListsAPI.Features.TodoItems.DataAccess;
 using ListsAPI.Infrastructure;
 using ListsAPI.Infrastructure.Authentication;
@@ -34,6 +36,25 @@ namespace ListsAPI
         {
             services.AddDbContext<ListContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            ConfigureDependencies(services);
+
+            services.AddCors();
+
+            services.AddMvc()
+                .AddFluentValidation(fvc =>
+                    fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Shine", Version = "v1" });
+            });
+
+            ConfigureAuthentication(services);
+        }
+
+        public void ConfigureDependencies(IServiceCollection services)
+        {
             services.AddScoped<ITodoItemsWriter, TodoItemsWriter>();
             services.AddScoped<ITodoItemsReader, TodoItemsReader>();
             services.AddScoped<IListWriter, ListWriter>();
@@ -50,19 +71,19 @@ namespace ListsAPI
             services.AddScoped<IAuthenticationTokenProvider, AuthenticationTokenProvider>();
             services.AddScoped<IContentDeliveryNetworkResolver, ContentDeliveryNetworkResolver>();
 
-            services.AddCors();
-
-            services.AddMvc()
-                .AddFluentValidation(fvc =>
-                    fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "Shine", Version = "v1" });
-            });
-
-            ConfigureAuthentication(services);
+            services.AddScoped<ISuggestionsProvider, SuggestionsProvider>();
+            services.AddScoped<ISuggestionsGenerator, JanuarySuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, FebruarySuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, MarchSuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, AprilSuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, MaySuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, JuneSuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, JulySuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, AugustSuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, SeptemberSuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, OctoberSuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, NovemberSuggestionsGenerator>();
+            services.AddScoped<ISuggestionsGenerator, DecemberSuggestionsGenerator>();
         }
 
         public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
