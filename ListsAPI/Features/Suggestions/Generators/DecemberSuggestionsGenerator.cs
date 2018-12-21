@@ -5,13 +5,13 @@ namespace ListsAPI.Features.Suggestions.Generators
 {
     public class DecemberSuggestionsGenerator : ISuggestionsGenerator
     {
-        string ISuggestionsGenerator.Month => "December";
+        public string Month => "December";
 
         public IEnumerable<SuggestionResponse> Generate()
         {
             var response = new List<SuggestionResponse>
             {
-                BaseSuggestions.BlankList,
+                BaseSuggestions.GetBlankList(),
                 new SuggestionResponse
                 {
                     SuggestionTitle = "Christmas is coming, are you ready?",
@@ -21,9 +21,9 @@ namespace ListsAPI.Features.Suggestions.Generators
                     ListDescription = "Spread the Christmas cheer by remembering to get everybody a gift this year!",
                     ListBackgroundImageUrl = "https://shinestorage.azureedge.net/bespokebackgrounds/christmas.jpg"
                 },
-                BaseSuggestions.ShoppingList,
-                BaseSuggestions.Tomorrow,
-                BaseSuggestions.OddJobs
+                BaseSuggestions.ShoppingList(),
+                BaseSuggestions.Tomorrow(),
+                BaseSuggestions.OddJobs()
             };
 
             return response;

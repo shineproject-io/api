@@ -11,7 +11,7 @@ namespace ListsAPI.Features.Suggestions.Generators
         {
             var response = new List<SuggestionResponse>
             {
-                BaseSuggestions.BlankList,
+                BaseSuggestions.GetBlankList(),
                 new SuggestionResponse
                 {
                     SuggestionTitle = "What are your new years resolutions?",
@@ -21,9 +21,17 @@ namespace ListsAPI.Features.Suggestions.Generators
                     ListDescription = "These are the things I want to do better this year.",
                     ListBackgroundImageUrl = "https://shinestorage.azureedge.net/productlistbackgrounds/1.jpg"
                 },
-                BaseSuggestions.ShoppingList,
-                BaseSuggestions.Tomorrow,
-                BaseSuggestions.OddJobs
+                new SuggestionResponse
+                {
+                    SuggestionTitle = "Looking to reduce your outgoings?",
+                    SuggestionDescription = "Why not list out the things you can cut down on and then get them sorted.",
+                    SuggestionIcon = "fas fa-money-check-alt",
+                    ListTitle = "Cut outgoings",
+                    ListDescription = "These are the costs we should be able to reduce.",
+                    ListBackgroundImageUrl = "https://shinestorage.azureedge.net/productlistbackgrounds/1.jpg"
+                },
+                BaseSuggestions.Tomorrow(),
+                BaseSuggestions.OddJobs()
             };
 
             return response;

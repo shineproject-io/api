@@ -11,10 +11,10 @@ namespace ListsAPI.Features.Suggestions.Generators
         {
             var response = new List<SuggestionResponse>
             {
-                BaseSuggestions.BlankList,
-                BaseSuggestions.ShoppingList,
-                BaseSuggestions.Tomorrow,
-                BaseSuggestions.OddJobs
+                BaseSuggestions.GetBlankList(),
+                BaseSuggestions.ShoppingList(),
+                BaseSuggestions.Tomorrow(),
+                BaseSuggestions.OddJobs()
             };
 
             return response;

@@ -10,7 +10,7 @@ namespace ListsApi.Tests
     public class SuggestionsProviderTests
     {
         [Test]
-        public void Verify_ThatEachMonth_HasAValidGenerator()
+        public static void Verify_ThatEachMonth_HasAValidGenerator()
         {
             var suggestionGenerators = new List<ISuggestionsGenerator>
             {
@@ -36,7 +36,7 @@ namespace ListsApi.Tests
             {
                 try
                 {
-                    var suggestions = suggestionsProvider.Provide(new DateTime(2018, month, 1));
+                    suggestionsProvider.Provide(new DateTime(2018, month, 1));
 
                     validMonths++;
                 }
