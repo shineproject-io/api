@@ -2,9 +2,8 @@
 {
     public enum NotificationType
     {
-        Welcome = 1,
-        System = 2,
-        Security = 3,
-        Invitation = 4,
+        System = 1,
+        Security = 2,
+        Invitation = 3,
     }
 }

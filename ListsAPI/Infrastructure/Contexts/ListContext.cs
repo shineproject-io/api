@@ -1,4 +1,5 @@
 ﻿using ListsAPI.Features.Lists.Tables;
+using ListsAPI.Features.Notifications.Tables;
 using ListsAPI.Features.Profile.Tables;
 using ListsAPI.Features.TodoItems.Tables;
 using Microsoft.EntityFrameworkCore;
@@ -19,5 +20,6 @@ namespace ListsAPI.Infrastructure
         public DbSet<TodoItem> TodoItems { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserProfileToken> UserProfileTokens { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
     }
 }
