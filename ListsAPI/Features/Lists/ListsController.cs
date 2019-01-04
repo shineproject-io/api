@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 namespace ListsAPI.Features.Lists
 {
     [ApiController]
+    [Authorize]
     public class ListsController : ControllerBase
     {
         private readonly IListAuthoriser _listAuthoriser;
@@ -42,7 +43,6 @@ namespace ListsAPI.Features.Lists
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize]
         [Route("api/lists")]
         [ProducesResponseType(typeof(IEnumerable<ListResponse>), 200)]
         public async Task<IActionResult> Get()
@@ -68,7 +68,6 @@ namespace ListsAPI.Features.Lists
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize]
         [Route("api/lists/{listId}")]
         [ProducesResponseType(typeof(ListResponse), 200)]
         public async Task<IActionResult> GetByListId(int listId)
@@ -98,7 +97,6 @@ namespace ListsAPI.Features.Lists
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
         [Route("api/lists")]
         [ProducesResponseType(typeof(int), 200)]
         public async Task<IActionResult> Post(CreateListRequest request)
@@ -119,7 +117,6 @@ namespace ListsAPI.Features.Lists
         /// <param name="listId"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Authorize]
         [Route("api/lists/{listId}")]
         public async Task<IActionResult> Delete(int listId)
         {
@@ -149,7 +146,6 @@ namespace ListsAPI.Features.Lists
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        [Authorize]
         [Route("api/lists/{listId}/name")]
         public async Task<IActionResult> ChangeName(int listId, ChangeNameRequest request)
         {
@@ -172,7 +168,6 @@ namespace ListsAPI.Features.Lists
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        [Authorize]
         [Route("api/lists/{listId}/description")]
         public async Task<IActionResult> ChangeDescription(int listId, ChangeDescriptionRequest request)
         {
@@ -194,7 +189,6 @@ namespace ListsAPI.Features.Lists
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
         [Route("api/lists/order")]
         public async Task<IActionResult> ChangeOrder(ChangeListOrderRequest request)
         {
@@ -210,7 +204,6 @@ namespace ListsAPI.Features.Lists
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        [Authorize]
         [Route("api/lists/{listId}/state")]
         public async Task<IActionResult> ChangeState(int listId, ChangeStateRequest request)
         {
@@ -238,7 +231,6 @@ namespace ListsAPI.Features.Lists
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        [Authorize]
         [Route("api/lists/{listId}/picture")]
         public async Task<IActionResult> ChangePicture(int listId, ChangePictureRequest request)
         {
@@ -268,7 +260,6 @@ namespace ListsAPI.Features.Lists
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut]
-        [Authorize]
         [Route("api/lists/{listId}/picture/upload")]
         public async Task<IActionResult> UploadPicture(int listId)
         {
@@ -319,7 +310,6 @@ namespace ListsAPI.Features.Lists
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
         [Route("api/lists/welcome")]
         [ProducesResponseType(typeof(int), 200)]
         public async Task<IActionResult> CreateWelcomeList()
@@ -333,6 +323,27 @@ namespace ListsAPI.Features.Lists
             );
 
             return Ok(listId);
+        }
+
+        [HttpPost]
+        [Route("api/lists/{listId}/pin")]
+        public async Task<IActionResult> PinList(int listId)
+        {
+            var authorisationResponse = await _listAuthoriser.IsOwner(listId, _userProfileId);
+
+            if (!authorisationResponse.AuthorisationResult)
+            {
+                return NotFound();
+            }
+
+            if (authorisationResponse.ResponseObject.State != ListState.Open)
+            {
+                return BadRequest("The requested list is not open");
+            }
+
+            await _listWriter.PinList(_userProfileId, listId);
+
+            return NoContent();
         }
     }
 }

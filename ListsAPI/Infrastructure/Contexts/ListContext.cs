@@ -16,6 +16,7 @@ namespace ListsAPI.Infrastructure
         }
 
         public DbSet<List> Lists { get; set; }
+        public DbSet<UserProfilePinnedList> UserProfilePinnedLists { get; set; }
         public DbSet<TodoItem> TodoItems { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserProfileToken> UserProfileTokens { get; set; }
