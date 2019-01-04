@@ -42,7 +42,7 @@ namespace ListsAPI.Features.Lists
 
             if (result == null)
             {
-                return NotFound();
+                return NoContent();
             }
 
             var authorisationResponse = await _listAuthoriser.IsOwner(result.Id, _userProfileId);
