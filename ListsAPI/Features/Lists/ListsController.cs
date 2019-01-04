@@ -324,26 +324,5 @@ namespace ListsAPI.Features.Lists
 
             return Ok(listId);
         }
-
-        [HttpPost]
-        [Route("api/lists/{listId}/pin")]
-        public async Task<IActionResult> PinList(int listId)
-        {
-            var authorisationResponse = await _listAuthoriser.IsOwner(listId, _userProfileId);
-
-            if (!authorisationResponse.AuthorisationResult)
-            {
-                return NotFound();
-            }
-
-            if (authorisationResponse.ResponseObject.State != ListState.Open)
-            {
-                return BadRequest("The requested list is not open");
-            }
-
-            await _listWriter.PinList(_userProfileId, listId);
-
-            return NoContent();
-        }
     }
 }
