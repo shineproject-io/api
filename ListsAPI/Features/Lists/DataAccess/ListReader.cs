@@ -14,6 +14,8 @@ namespace ListsAPI.Features.Lists.DataAccess
 
         Task<List> GetByListId(int listId);
 
+        Task<List> GetPinnedListByUserProfileId(int userProfileId);
+
         Task<IEnumerable<List>> Search(string searchQuery, int userProfileId);
     }
 
@@ -47,6 +49,27 @@ namespace ListsAPI.Features.Lists.DataAccess
                 var list = await con.QuerySingleOrDefaultAsync<List>(@"SELECT * FROM Lists WHERE Id = @listId", new
                 {
                     listId
+                });
+
+                return list;
+            }
+        }
+
+        public async Task<List> GetPinnedListByUserProfileId(int userProfileId)
+        {
+            using (var con = _databaseConnectionProvider.New())
+            {
+                var list = await con.QueryFirstOrDefaultAsync<List>(@"
+                    SELECT
+	                    LST.*
+                    FROM
+	                    UserProfilePinnedLists AS PIN
+		                    INNER JOIN Lists AS LST ON PIN.ListId = LST.Id
+                    WHERE
+	                    PIN.UserProfileId = @userProfileId
+		                    AND LST.State = 1", new
+                {
+                    userProfileId
                 });
 
                 return list;

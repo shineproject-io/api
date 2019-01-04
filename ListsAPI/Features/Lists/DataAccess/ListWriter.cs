@@ -23,6 +23,8 @@ namespace ListsAPI.Features.Lists.DataAccess
         Task ChangeDescription(int listId, string description);
 
         Task ChangeOrder(List<int> orderedListIds, int userProfileId);
+
+        Task PinList(int userProfileId, int listId);
     }
 
     public class ListWriter : IListWriter
@@ -203,6 +205,31 @@ namespace ListsAPI.Features.Lists.DataAccess
                         state = ListState.Open
                     });
                 }
+            }
+        }
+
+        public async Task PinList(int userProfileId, int listId)
+        {
+            using (var con = _databaseConnectionProvider.New())
+            {
+                var updateDate = DateTime.UtcNow;
+
+                await con.ExecuteAsync(@"
+                    MERGE INTO
+	                    UserProfilePinnedLists AS TARGET
+                    USING (SELECT @userProfileId, @listId) AS SOURCE (UserProfileId, ListId)
+                    ON (TARGET.UserProfileId = SOURCE.UserProfileId)
+                    WHEN MATCHED THEN
+	                    UPDATE SET ListId = SOURCE.ListId
+                    WHEN NOT MATCHED THEN
+	                    INSERT
+		                    (UserProfileId, ListId)
+	                    VALUES
+		                    (SOURCE.UserProfileId, SOURCE.ListId);", new
+                {
+                    userProfileId,
+                    listId
+                });
             }
         }
     }
