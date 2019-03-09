@@ -4,6 +4,7 @@ using ListsAPI.Infrastructure;
 using ListsAPI.Infrastructure.Database;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace ListsAPI.Features.Lists.DataAccess
@@ -25,6 +26,10 @@ namespace ListsAPI.Features.Lists.DataAccess
         Task ChangeOrder(List<int> orderedListIds, int userProfileId);
 
         Task PinList(int userProfileId, int listId);
+
+        Task UnpinList(int userProfileId, IDbTransaction transaction);
+
+        Task DeleteListsByUserProfileId(int userProfileId, IDbTransaction transaction);
     }
 
     public class ListWriter : IListWriter
@@ -231,6 +236,32 @@ namespace ListsAPI.Features.Lists.DataAccess
                     listId
                 });
             }
+        }
+
+        public async Task UnpinList(int userProfileId, IDbTransaction transaction)
+        {
+            await transaction.Connection.ExecuteAsync(@"
+                DELETE FROM
+                    UserProfilePinnedLists
+                WHERE
+                    userProfileId = @userProfileId", new
+            {
+                userProfileId
+            },
+            transaction);
+        }
+
+        public async Task DeleteListsByUserProfileId(int userId, IDbTransaction transaction)
+        {
+            await transaction.Connection.ExecuteAsync(@"
+                DELETE FROM
+                    Lists
+                WHERE
+                    UserId = @userId", new
+            {
+                userId
+            },
+            transaction);
         }
     }
 }

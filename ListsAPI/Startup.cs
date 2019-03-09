@@ -2,6 +2,7 @@
 using ListsAPI.Features.Lists.Authorizers;
 using ListsAPI.Features.Lists.DataAccess;
 using ListsAPI.Features.Profile.DataAccess;
+using ListsAPI.Features.Profile.Services;
 using ListsAPI.Features.Suggestions.Generators;
 using ListsAPI.Features.Suggestions.Providers;
 using ListsAPI.Features.TodoItems.DataAccess;
@@ -70,6 +71,7 @@ namespace ListsAPI
             services.AddScoped<IListAuthoriser, ListAuthoriser>();
             services.AddScoped<IAuthenticationTokenProvider, AuthenticationTokenProvider>();
             services.AddScoped<IContentDeliveryNetworkResolver, ContentDeliveryNetworkResolver>();
+            services.AddScoped<IUserProfileDeletionManager, UserProfileDeletionManager>();
 
             services.AddScoped<ISuggestionsProvider, SuggestionsProvider>();
             services.AddScoped<ISuggestionsGenerator, JanuarySuggestionsGenerator>();

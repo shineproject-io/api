@@ -1,11 +1,9 @@
 ﻿using Dapper;
 using ListsAPI.Features.TodoItems.Enums;
-using ListsAPI.Features.TodoItems.Tables;
-using ListsAPI.Infrastructure;
 using ListsAPI.Infrastructure.Database;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace ListsAPI.Features.TodoItems.DataAccess
@@ -23,6 +21,8 @@ namespace ListsAPI.Features.TodoItems.DataAccess
         Task ChangeOrder(int listId, List<int> orderedTodoItems);
 
         Task MigrateOpenTodoItemsToListById(int fromListId, int toListId);
+
+        Task DeleteTodoItemsByUserProfileId(int userProfileId, IDbTransaction transaction);
     }
 
     public class TodoItemsWriter : ITodoItemsWriter
@@ -132,7 +132,7 @@ namespace ListsAPI.Features.TodoItems.DataAccess
             {
                 var updateDate = DateTime.UtcNow;
 
-                for(int loop = 0; loop < orderedTodoItems.Count; loop += 1)
+                for (int loop = 0; loop < orderedTodoItems.Count; loop += 1)
                 {
                     var todoItemId = orderedTodoItems[loop];
 
@@ -177,6 +177,19 @@ namespace ListsAPI.Features.TodoItems.DataAccess
                     openState = TodoItemState.Open
                 });
             }
+        }
+
+        public async Task DeleteTodoItemsByUserProfileId(int userProfileId, IDbTransaction transaction)
+        {
+            await transaction.Connection.ExecuteAsync(@"
+                DELETE FROM
+                    TodoItems
+                WHERE
+                    UserProfileId = @userProfileId", new
+            {
+                userProfileId
+            }, 
+            transaction);
         }
     }
 }

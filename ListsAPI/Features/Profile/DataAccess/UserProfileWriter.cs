@@ -2,6 +2,7 @@
 using ListsAPI.Infrastructure;
 using ListsAPI.Infrastructure.Database;
 using System;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace ListsAPI.Features.Profile.DataAccess
@@ -17,6 +18,8 @@ namespace ListsAPI.Features.Profile.DataAccess
         Task SetEmailAddress(int userProfileId, string emailAddress);
 
         Task SetProfilePicturePath(int userProfileId, string profilePicturePath, string profilePictureFileName);
+
+        Task DeleteUserProfile(int userProfileId, IDbTransaction transaction);
     }
 
     public class UserProfileWriter : IUserProfileWriter
@@ -147,6 +150,19 @@ namespace ListsAPI.Features.Profile.DataAccess
                     userProfileId
                 });
             }
+        }
+
+        public async Task DeleteUserProfile(int userProfileId, IDbTransaction transaction)
+        {
+            await transaction.Connection.ExecuteAsync(@"
+                    DELETE FROM
+                        UserProfiles
+                    WHERE
+                        Id = @userProfileId", new
+            {
+                userProfileId
+            }, 
+            transaction);
         }
     }
 }
