@@ -44,7 +44,6 @@ namespace ListsAPI.Features.Profile.Services
                     {
                         await _userProfileWriter.DeleteUserProfile(userProfileId, transaction);
                         await _listWriter.DeleteListsByUserProfileId(userProfileId, transaction);
-                        await _listWriter.UnpinList(userProfileId, transaction);
                         await _todoItemsWriter.DeleteTodoItemsByUserProfileId(userProfileId, transaction);
 
                         transaction.Commit();

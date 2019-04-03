@@ -25,10 +25,6 @@ namespace ListsAPI.Features.Lists.DataAccess
 
         Task ChangeOrder(List<int> orderedListIds, int userProfileId);
 
-        Task PinList(int userProfileId, int listId);
-
-        Task UnpinList(int userProfileId, IDbTransaction transaction);
-
         Task DeleteListsByUserProfileId(int userProfileId, IDbTransaction transaction);
     }
 
@@ -211,44 +207,6 @@ namespace ListsAPI.Features.Lists.DataAccess
                     });
                 }
             }
-        }
-
-        public async Task PinList(int userProfileId, int listId)
-        {
-            using (var con = _databaseConnectionProvider.New())
-            {
-                var updateDate = DateTime.UtcNow;
-
-                await con.ExecuteAsync(@"
-                    MERGE INTO
-	                    UserProfilePinnedLists AS TARGET
-                    USING (SELECT @userProfileId, @listId) AS SOURCE (UserProfileId, ListId)
-                    ON (TARGET.UserProfileId = SOURCE.UserProfileId)
-                    WHEN MATCHED THEN
-	                    UPDATE SET ListId = SOURCE.ListId
-                    WHEN NOT MATCHED THEN
-	                    INSERT
-		                    (UserProfileId, ListId)
-	                    VALUES
-		                    (SOURCE.UserProfileId, SOURCE.ListId);", new
-                {
-                    userProfileId,
-                    listId
-                });
-            }
-        }
-
-        public async Task UnpinList(int userProfileId, IDbTransaction transaction)
-        {
-            await transaction.Connection.ExecuteAsync(@"
-                DELETE FROM
-                    UserProfilePinnedLists
-                WHERE
-                    userProfileId = @userProfileId", new
-            {
-                userProfileId
-            },
-            transaction);
         }
 
         public async Task DeleteListsByUserProfileId(int userId, IDbTransaction transaction)

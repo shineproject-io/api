@@ -161,7 +161,7 @@ namespace ListsAPI.Features.Profile.DataAccess
                         Id = @userProfileId", new
             {
                 userProfileId
-            }, 
+            },
             transaction);
         }
     }

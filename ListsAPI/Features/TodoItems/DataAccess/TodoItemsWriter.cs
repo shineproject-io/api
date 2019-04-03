@@ -188,7 +188,7 @@ namespace ListsAPI.Features.TodoItems.DataAccess
                     UserProfileId = @userProfileId", new
             {
                 userProfileId
-            }, 
+            },
             transaction);
         }
     }
