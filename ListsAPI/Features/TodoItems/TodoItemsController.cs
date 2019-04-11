@@ -55,6 +55,7 @@ namespace ListsAPI.Features.Lists
                     Id = tsk.Id,
                     Title = tsk.Title,
                     State = tsk.State.ToString(),
+                    IsImportant = tsk.IsImportant,
                     Position = tsk.Position
                 });
 
@@ -108,6 +109,36 @@ namespace ListsAPI.Features.Lists
             }
 
             await _todoItemsWriter.ChangeState(todoItem.Id, request.state);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Change the importance state of a todo item
+        /// </summary>
+        /// <param name="listId"></param>
+        /// <param name="todoItemId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("api/lists/{listId}/todoItems/{todoItemId}/importance")]
+        public async Task<IActionResult> ChangeImportance(int listId, int todoItemId, ChangeTodoItemImportanceRequest request)
+        {
+            var authorisationResponse = await _listAuthoriser.IsOwner(listId, _userProfileId);
+
+            if (!authorisationResponse.AuthorisationResult)
+            {
+                return NotFound();
+            }
+
+            var todoItem = await _todoItemsReader.GetByTodoItemId(todoItemId);
+
+            if (todoItem == null || todoItem.UserProfileId != _userProfileId)
+            {
+                return NotFound();
+            }
+
+            await _todoItemsWriter.ChangeImportance(todoItem.Id, request.IsImportant ? 1 : 0);
 
             return Ok();
         }

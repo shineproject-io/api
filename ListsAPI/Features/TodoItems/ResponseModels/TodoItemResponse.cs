@@ -8,6 +8,8 @@
 
         public string State { get; set; }
 
+        public bool IsImportant { get; set; }
+
         public int? Position { get; set; }
     }
 }

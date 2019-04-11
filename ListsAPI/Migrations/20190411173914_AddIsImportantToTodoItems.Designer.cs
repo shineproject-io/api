@@ -3,14 +3,16 @@ using ListsAPI.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
 namespace ListsAPI.Migrations
 {
     [DbContext(typeof(ListContext))]
-    partial class ListContextModelSnapshot : ModelSnapshot
+    [Migration("20190411173914_AddIsImportantToTodoItems")]
+    partial class AddIsImportantToTodoItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

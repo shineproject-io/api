@@ -16,6 +16,8 @@ namespace ListsAPI.Features.TodoItems.DataAccess
 
         Task ChangeState(int todoItemId, TodoItemState state);
 
+        Task ChangeImportance(int todoItemId, int isImportant);
+
         Task ChangeTitle(int todoItemId, string title);
 
         Task ChangeOrder(int listId, List<int> orderedTodoItems);
@@ -101,6 +103,34 @@ namespace ListsAPI.Features.TodoItems.DataAccess
                     updateDate,
                     todoItemId
                 });
+            }
+        }
+
+        public async Task ChangeImportance(int todoItemId, int isImportant)
+        {
+            using (var con = _databaseConnectionProvider.New())
+            {
+                var updateDate = DateTime.UtcNow;
+                try
+                {
+                    await con.ExecuteAsync(@"
+                    UPDATE
+                        TodoItems
+                    SET
+                        IsImportant = @isImportant,
+                        DateUpdated = @updateDate
+                    WHERE
+                        Id = @todoItemId", new
+                    {
+                        isImportant,
+                        updateDate,
+                        todoItemId
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
 

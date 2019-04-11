@@ -27,6 +27,9 @@ namespace ListsAPI.Features.TodoItems.Tables
         [Required]
         public DateTime DateUpdated { get; set; }
 
+        [Required]
+        public bool IsImportant { get; set; }
+
         public int? Position { get; set; }
     }
 }
