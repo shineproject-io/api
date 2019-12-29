@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Content Include="wwwroot\.well-known\pki-validation\CAD065EB28E5107220AB16414AF2C4D9.txt" />
   </ItemGroup>
 
   <ItemGroup>
