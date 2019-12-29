@@ -119,6 +119,7 @@ namespace ListsAPI
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
+            app.UseStaticFiles();
         }
 
         private void ConfigureAuthentication(IServiceCollection services)
